@@ -1,0 +1,122 @@
+
+Q:1
+import requests
+title='India'
+resp = requests.get("http://en.wikipedia.org/w/api.php?format=json&action=query&titles="+str(title)+"&prop=revisions&rvprop=content")
+resp
+jdata = resp.json();
+cntnt=jdata['query']['pages'].values()[0]['revisions'][0]
+cntnt
+
+Q:2:
+I loaded the first sentence of the "size" wikipedia article with provided method. It is parsing correctly. 
+`` thumb | right | A size comparison illustration comparing the size of an average human to the size of certain prehistoric sharks 
+
+A - DT
+size - NN
+comparison - NN
+Illustration-NN
+comparing - VBG
+of - IN
+an - DT
+average- JJ
+human- NN
+to - TO
+of - IN
+certain, prehistoric - NN
+sharks-NNS
+
+Q:3
+def testnode2(node, agent, action):
+aa = node.findall("./node[@value='NP']//node[@value='NNS']//leaf[@value='"+agent+"']")
+bb = node.findall("./node[@value='VP']//node[@value='VBP']//leaf[@value='"+action+"']")
+if (len(aa) > 0 and len(bb) > 0):
+printnode(node)
+
+Cats have been domesticated -LRB- tame -RRB- for nearly 10,000 years . 
+Cat anatomy Cats have anatomy similar to the other members of the genus Felis .
+
+def testnode2(node, agent, action):
+aa = node.findall("./node[@value='NP']//node[@value='NNS']//leaf[@value='"+agent+"']")
+bb = node.findall("./node[@value='VP']//node[@value='NP']//leaf[@value='"+action+"']")
+if (len(aa) > 0 and len(bb) > 0):
+printnode(node)
+
+The  oldest  evidence  of  cats  kept  as  pets  is  from  the  Mediterranean  island  of  Cyprus  ,  around  7500  BC  . 
+ 
+Q:4:
+
+Jim Parsons
+def testnode2(node, agent, action):
+    aa = node.findall("./node[@value='VP']//node[@value='NP']//leaf[@value='"+agent+"']")
+    bb = node.findall("./node[@value='VP']//node[@value='VP']//leaf[@value='"+action+"']")
+    if (len(aa) > 0 and len(bb) > 0):
+        printnode(node)
+
+On  May  23  ,  2012  ,  an  article  in  The  New  York  Times  noted  that  Parsons  is  gay  and  had  been  in  a  relationship  for  the  last  ten  years  . 
+
+Barack Obama:
+
+def testnode2(node, agent, action):
+aa = node.findall("./node[@value='NP']//node[@value='PRP']//leaf[@value='"+agent+"']")
+bb = node.findall("./node[@value='VP']//node[@value='JJ']//leaf[@value='"+action+"']")
+if (len(aa) > 0 and len(bb) > 0):
+printnode(node)
+
+He was selected as an editor of the Harvard Law Review at the end of his first year , Mendell -LRB- 2007 -RRB- , pp. 80 \ u201392 . 
+He sponsored and led unanimous , bipartisan passage of legislation to monitor racial profiling by requiring police to record the race of drivers they detained , and legislation making Illinois the first state to mandate videotaping of homicide interrogations . 
+He became the first African American to be elected president .
+
+def testnode2(node, agent, action):
+aa = node.findall("./node[@value='NP']//node[@value='NNP']//leaf[@value='"+agent+"']")
+bb = node.findall("./node[@value='VP']//node[@value='NP']//leaf[@value='"+action+"']")
+if (len(aa) > 0 and len(bb) > 0):
+printnode(node)
+
+Obama  and  the  Congressional  Budget  Office  predicted  the  2010  budget  deficit  would  be  $  1.5  \  u00a0trillion  or  10.6  \  u00a0percent  of  the  nation  's  gross  domestic  product  -LRB-  GDP  -RRB-  compared  to  the  2009  deficit  of  $  1.4  \  u00a0trillion  or  9.9  \  u00a0percent  of  GDP  . 
+
+Q:5:
+Answer:
+Place of Birth
+
+def testnode(node, agent, action):
+    aa = node.findall("./node[@value='NP']//leaf[@value='"+agent+"']")
+    bb = node.findall(".//node[@value='VP']//node[@value='VBN']//leaf[@value='born']")
+    cc = node.findall(".//node[@value='VP']//node[@value='IN']//leaf[@value='"+action+"']")
+    if (len(aa) > 0 and len(bb) > 0 and len(cc) > 0):
+        printnode(node)
+
+def agentact(node, agent, action):
+    testnode(node, agent, action)
+    snodes = node.findall(".//node[@value='S']")
+    for snode in snodes:
+        testnode(snode, agent, action)
+
+map(lambda (nn): agentact(nn[0][0][0], title, 'in'), root)
+
+Output:
+
+Early  life  Obama  was  born  on  August  4  ,  1961  in  Kapi  \  u02bbolani  Maternity  &  Gynecological  Hospital  -LRB-  now  Kapi  \  u02bbolani  Medical  Center  for  Women  and  Children  -RRB-  in  Honolulu  ,  Hawaii  and  is  the  first  President  to  have  been  born  in  Hawaii  
+
+
+Spouse
+
+def testnode(node, agent, action):
+  aa = node.findall("./node[@value='NP']//leaf[@value='"+agent+"']")
+  bb = node.findall(".//node[@value='VP']//node[@value='VBN']//leaf[@value='married']")
+  cc = node.findall(".//node[@value='VP']//node[@value='VBZ']//leaf[@value='"+action+"']")
+  if (len(aa) > 0 and len(bb) > 0):
+    printnode(node)
+
+def agentact(node, agent, action):
+  testnode(node, agent, action)
+  snodes = node.findall(".//node[@value='S']")
+  for snode in snodes:
+    testnode(snode, agent, action)
+
+map(lambda (nn): agentact(nn[0][0][0], 'Obama', 'has'), root)
+
+Output:
+
+ Obama  has  been  married  to  Michelle  Obama  since  1992  
+

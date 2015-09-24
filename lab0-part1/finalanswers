@@ -1,0 +1,155 @@
+Q:1:
+Commands:
+
+retcode404_df=log_df[log_df['ResponseCode'] == 404]
+grouped = retcode404_df.groupby('ClientID')
+grouped.size()
+
+Answer:
+
+ClientID
+85          1
+130         1
+213         1
+247         2
+314         1
+384         2
+426         2
+525         1
+569         1
+589         1
+666         1
+803         1
+977         1
+1113        1
+1156        1
+...
+18098       1
+18099       1
+18116       1
+18177       1
+18476       2
+18516       1
+18566       1
+18854       2
+18919       2
+19083       1
+19420       1
+19498       1
+19507       1
+19932       1
+20644       1
+Length: 154, dtype: int64
+
+Q:2:
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+Before:
+may1_df = log_df['Date'] == '01/May/1998'
+before_df = log_df['Time'] < '12:00:00'
+before=log_df[may1_df & before_df]
+[75920 rows x 6 columns]
+75920 requests before 12:00:00
+
+After:
+may1_df = log_df['Date'] == '01/May/1998'
+after_df = log_df['Time'] > '12:00:00'
+after=log_df[may1_df & after_df]
+[107379 rows x 6 columns]
+107379 requests after 12:00:00
+
+
+Q:3:
+fileextdf=log_df[(log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+
+Mean: 3617.719003
+Standard Deviation: 9056.254743
+
+[149158 rows x 6 columns]
+>>> fileextdf.describe()
+            ClientID  ResponseCode           Size
+count  149158.000000        149158  149158.000000
+mean    10108.147582           200    3617.719003
+std      6276.283991             0    9056.254743
+min         0.000000           200      42.000000
+25%      4616.000000           200     269.000000
+50%     10173.000000           200     914.000000
+75%     15238.000000           200    1927.000000
+max     34794.000000           200   86051.000000
+
+Q:4:
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1)) 
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+hour_grouped.size().plot(color='red')
+show()
+
+Q:5:
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1))
+unique_ids=log_df['ClientID'].unique()[:100]
+unique_log_df=log_df['ClientID'].isin(unique_ids)
+unique_log_df=log_df[unique_log_df]
+def hr_func(ts):
+    return ts.hour
+unique_log_df['Hour'] = unique_log_df.DateTime.apply(hr_func)
+unique_recs=unique_log_df[['ClientID', 'Hour']]
+unique_recs.plot(kind='scatter', x='ClientID', y='Hour')
+show()
+
+Q:6:
+
+cat wc_day91_2.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([A-Z][a-z][a-z]\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > wc_day91_2.csv
+
+Commands for Date '24/Jul/1998'
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+fileextdf=log_df[(log_df['Date'] == '24/Jul/1998') & (log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+
+fileextdf.describe()
+
+       ResponseCode          Size
+count         80860  80860.000000
+mean            200   3123.616139
+std               0   6130.746585
+min             200     41.000000
+25%             200    546.000000
+50%             200   1015.000000
+75%             200   2696.000000
+max             200  86051.000000
+
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df=log_df[(log_df['Date'] == '24/Jul/1998')]
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1)) 
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+hour_grouped.size().plot(color='red')
+
+
+Commands for Date '25/Jul/1998'
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+fileextdf=log_df[(log_df['Date'] == '25/Jul/1998') & (log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+fileextdf.describe()
+
+       ResponseCode           Size
+count        814226  814226.000000
+mean            200    3222.736732
+std               0    6316.034151
+min             200      41.000000
+25%             200     554.000000
+50%             200    1065.000000
+75%             200    2740.000000
+max             200   86051.000000
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df=log_df[(log_df['Date'] == '25/Jul/1998')]
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1))
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+hour_grouped.size().plot(color='red')
+
+

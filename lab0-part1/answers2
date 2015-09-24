@@ -1,0 +1,73 @@
+37.92
+
+Q:4: Generate a plot of the number of users of the site every hour.
+
+
+times = pd.to_datetime(df.timestamp_col)
+times = pd.to_datetime(log_df['Time'])
+
+
+log_df.groupby('ClientID')
+
+Q:3:  What is the average file size for images (.gif, .jpg and .jpeg files), which had response code 200? What is the standard deviation?
+resp200 = log_df['ResponseCode'] == 200
+resp200df = log_df[resp200]
+
+log_df[resp200df['URL'].str.endswith("jpg")] | resp200df[resp200df['URL'].str.endswith("gif")] | resp200df[resp200df['URL'].str.endswith("jpeg")]
+
+
+
+filedf = log_df[log_df['URL'].str.contains("gif|jpg|jpeg")==True]
+filedf = log_df[log_df['URL'].str.endswith("gif|jpg|jpeg")==True]
+filedf.describe()
+
+
+filegif = log_df['URL'] == '*.gif'
+gifdf = log_df[filegif]
+
+
+Q:2: How many requests were made on May 1st before and after noon (12:00:00)
+
+
+may1_df = log_df[log_df['Date'] == '01/May/1998']
+databefore = log_df[log_df['Time'] < '12:00:00']
+dataafter = log_df[log_df['Time'] >= '12:00:00']
+
+
+dataafter = log_df[log_df['Time'] > '12:00:00']
+[124076 rows x 6 columns]
+127379
+
+
+
+
+Q:1
+Print the number of requests per client that had HTTP return code 404
+
+# of requests Per client 
+HTTP return code == 404
+
+groupby client id where response code = 404
+and then get the count. 
+
+respcode = log_df['ResponseCode'] == 404
+respdf = log_df[respcode]
+respdfgroupby = log_df.groupby('ClientID')
+grouped = log_df.groupby('ClientID')
+grouped.describe() 
+
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+resp_df = log_df['ResponseCode'] == '404'
+is_may1st = log_df['Date'] == '01/May/1998'
+
+resp_df = log_df[log_df['ResponseCode'] == '404']
+
+
+may1_df = log_df[is_may1st]
+
+
+respcode = log_df['ResponseCode'] == 404
+respdf = log_df[respcode]
+respdfgroupby = log_df.groupby('ClientID')

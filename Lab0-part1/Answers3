@@ -1,0 +1,240 @@
+from pylab import *
+
+import pandas as pd
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+1: 
+Print the number of requests per client that had HTTP return code 404
+
+Filter on 404
+
+
+retcode404_df=log_df[log_df['ResponseCode'] == 404]
+grouped = retcode404_df.groupby('ClientID')
+grouped.size()
+
+grouped.size()
+ClientID
+85          1
+130         1
+213         1
+247         2
+314         1
+384         2
+426         2
+525         1
+569         1
+589         1
+666         1
+803         1
+977         1
+1113        1
+1156        1
+...
+18098       1
+18099       1
+18116       1
+18177       1
+18476       2
+18516       1
+18566       1
+18854       2
+18919       2
+19083       1
+19420       1
+19498       1
+19507       1
+19932       1
+20644       1
+Length: 154, dtype: int64
+
+
+***********Below is how I can do the ending.
+retcode404_df=log_df[log_df['ClientID'] == 247]
+>>> retcode404_df=log_df['ClientID'] == 247
+>>> iddf=log_df['ResponseCode']==404
+>>> iddf=log_df[iddf & retcode404_df]
+
+
+
+Q:2:
+How many requests were made on May 1st before and after noon (12:00:00)
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+may1_df = log_df[log_df['Date'] == '01/May/1998']
+[183303 rows x 6 columns]
+
+
+may1_df = log_df['Date'] == '01/May/1998'
+before_df = log_df['Time'] < '12:00:00'
+before=log_df[may1_df & before_df]
+[75920 rows x 6 columns]
+
+may1_df = log_df['Date'] == '01/May/1998'
+after_df = log_df['Time'] > '12:00:00'
+after=log_df[may1_df & after_df]
+[107379 rows x 6 columns]
+
+
+Q:3:What is the average file size for images (.gif, .jpg and .jpeg files), which had response code 200? What is the standard deviation?
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+fileextdf=log_df[(log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+
+Mean: 3617.719003
+Standard Deviation: 9056.254743
+
+[149158 rows x 6 columns]
+>>> fileextdf.describe()
+            ClientID  ResponseCode           Size
+count  149158.000000        149158  149158.000000
+mean    10108.147582           200    3617.719003
+std      6276.283991             0    9056.254743
+min         0.000000           200      42.000000
+25%      4616.000000           200     269.000000
+50%     10173.000000           200     914.000000
+75%     15238.000000           200    1927.000000
+max     34794.000000           200   86051.000000
+
+
+
+Q:4:Generate a plot of the number of users of the site every hour.
+Groupby on Hours
+Filter on Number of Users and Hour Number
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1)) 
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+
+hour_grouped.size().plot(color='red')
+
+Q:5:
+We wish to see if there is any correlation between client-ids and hours of the day at which they visit the website. Get 100 client ids from the dataset and generate a scatter plot that shows the hours of the day these clients sent requests. Hint: df.plot(kind='scatter', x='a', y='b'); and df['Column'].unique()
+
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day6_1_sample.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1))
+
+unique_ids=log_df['ClientID'].unique()[:100]
+
+unique_log_df=log_df['ClientID'].isin(unique_ids)
+
+unique_log_df=log_df[unique_log_df]
+
+def hr_func(ts):
+    return ts.hour
+
+unique_log_df['Hour'] = unique_log_df.DateTime.apply(hr_func)
+
+unique_recs=unique_log_df[['ClientID', 'Hour']]
+unique_recs.plot(kind='scatter', x='ClientID', y='Hour')
+
+
+Q:6:
+
+The log file used in the lab was from one day of the WorldCup. Lets apply our analysis to Jul/24 and Jul/25 in the logs. For this start with the raw log file under lab0-2 files and load it as a Pandas DataFrame. Repeat exercises 3 and 4 with it. How similar or different are the results? Hint: You can use UNIX command line tools from Lab 1 to first get a csv file and then load it into Pandas.
+
+cat wc_day91_2.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([A-Z][a-z][a-z]\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > wc_day91_2.csv
+
+Commands for Date '24/Jul/1998'
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+
+fileextdf=log_df[(log_df['Date'] == '24/Jul/1998') & (log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+
+fileextdf.describe()
+
+       ResponseCode          Size
+count         80860  80860.000000
+mean            200   3123.616139
+std               0   6130.746585
+min             200     41.000000
+25%             200    546.000000
+50%             200   1015.000000
+75%             200   2696.000000
+max             200  86051.000000
+
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df=log_df[(log_df['Date'] == '24/Jul/1998')]
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1)) 
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+hour_grouped.size().plot(color='red')
+
+
+Commands for Date '25/Jul/1998'
+from pylab import *
+import pandas as pd
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+fileextdf=log_df[(log_df['Date'] == '25/Jul/1998') & (log_df['ResponseCode'] == 200) & (log_df['URL'].str.endswith('.gif') | log_df['URL'].str.endswith('.jpg') | log_df['URL'].str.endswith('.jpeg'))]
+fileextdf.describe()
+
+       ResponseCode           Size
+count        814226  814226.000000
+mean            200    3222.736732
+std               0    6316.034151
+min             200      41.000000
+25%             200     554.000000
+50%             200    1065.000000
+75%             200    2740.000000
+max             200   86051.000000
+
+log_df = pd.read_csv("/home/datascience/Downloads/wc_day91_2.csv", names=['ClientID', 'Date', 'Time', 'URL', 'ResponseCode', 'Size'], na_values=['-'])
+log_df=log_df[(log_df['Date'] == '25/Jul/1998')]
+log_df['DateTime'] = pd.to_datetime(log_df.apply(lambda row: row['Date'] + ' ' + row['Time'], axis=1)) 
+hour_grouped = log_df.groupby(lambda row: log_df['DateTime'][row].hour)
+hour_grouped.size().plot(color='red')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0 - - [30/Apr/1998:22:00:02 +0000] "GET /images/home_intro.anim.gif HTTP/1.0" 200 60349
+1 - - [30/Apr/1998:22:00:03 +0000] "GET /images/home_bg_stars.gif HTTP/1.0" 200 2557
+1 - - [30/Apr/1998:22:00:03 +0000] "GET /images/home_fr_phrase.gif HTTP/1.0" 200 2843
+
+1044,30/Apr/1998,22:46:12,/images/11104.gif,200,508
+10871,01/May/1998,12:10:53,/images/ligne.gif,200,169
+11012,01/May/1998,12:17:30,/english/individuals/player111503.htm,200,7027
+
+My query:
+cat 1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\(A-Za-za-z\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9][0-9]\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\4-04-\2,\5,\7,\8,\9,\6/' > 1.csv
+
+working 1:
+cat wc_day6_1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([aA]pr\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > 1.csv
+
+working2:
+cat wc_day6_1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([A-Z][a-z][a-z]\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > 1.csv
+
+
+cat wc_day91_2.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([A-Z][a-z][a-z]\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > 1.csv
+
+
+cat 1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\(A-Za-za-z\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > 1.csv
+
+cat 1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\(A-Za-za-z\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9][0-9]\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\3\4,\5,\"\6,\7,\8,\9/' > 1.csv
+
+
+
+cat 1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([aA]pr\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\2\/\3\/\4,\5,\7,\8,\9/' > 1.csv
+
+8,1998-04-30,22:00:05,/images/comp_stage2_brc_topr.gif,200,163,GET
+
+cat sample.log | sed 's/\([0-9]*\) - -\([[0-3][0-9]\/A-Za-za-z\/[0-9][0-9][0-9][0-9]:[0-9][0-9]:[0-9][0-9]:[0-9][0-9]\) \(+*\) \(\"*\) \(\/*\) \(*\"\) \([0-9]?\) \([0-9]?\)/\1,\2,\4,\5,\6,\7,\8/' | wc.csv
+
+head -10 wc_day6_1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([aA]pr\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\4-04-\2,\5,\7,\8,\9,\6/'

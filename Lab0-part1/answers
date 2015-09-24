@@ -1,0 +1,76 @@
+echo "The quick brown fox jumps over the lazy dog." | sed 's/[tT]he [a-z]*/The yellow/'
+
+echo "The quick brown fox jumps over the lazy dog." | sed 's/\([tT]he\) \([a-z]*\)/\1 "\2"/g'
+
+head -10 wc_day6_1.log | sed 's/\([aA]pr\)\( \)/\1/-04-'
+
+head -10 wc_day6_1.log | sed 's/[aA]pr/-04-/' | sed 's/(\ \)/\,\/'
+
+
+Q:5 :
+Ans: head -10 wc_day6_1.log | sed 's/[aA]pr/-04-/' | sed 's/ /,/g'
+
+Q: 4:Count the number of protocol "HTTP/1.0" used in each hour of the day
+Ans: grep "HTTP/1.0" wc_day6_1.log | wc -l 
+
+cut -d ' ' -f 4, wc_day6_1.log | sed 's/[30/Apr/1998]//'
+
+
+Q:3: Get the total number of appearance of different protocols in descending order.
+cut -d ' ' -f 8 wc_day6_1.log| sort -n -r | uniq -c | sort -n -r
+
+Q:2: Find the 3rd largest directory in the home directory?
+Ans: 
+du -a /home/datascience/ | sort -n -r | head -n 3 | tail -1 | cut -f 1
+
+
+Q:1: What are the 3 largest files in directory /usr/bin that have file name starting with "grub" ?
+Ans 
+du -h $(find /usr/bin -type f -name "grub*")| sort -n -r | head -n 3 | cut -f 2
+
+
+
+
+
+
+
+
+find /usr/bin/ -type f -name "grub*" -exec du {} \;| sort -n -r| head -3| cut -f 2
+
+du -sh ~/*/ | sort -n -r | head -3| tail -1| cut -f 2
+
+cat wc_day6_1.log | cut -d ' ' -f 8 | sort| uniq -c
+
+grep "HTTP/1.0" wc_day6_1.log | cut -d ' ' -f 4 | cut -d ':' -f 2 | sort -n | uniq -c
+
+head -10 wc_day6_1.log | sed 's/\([0-9]*\) - - [\[]*\([0-9]*\).*\([aA]pr\)[\/]*\([0-9]*\):\([0-9]*:[0-9]*:[0-9]*\).*"\([A-Z]*\) \([A-Za-z\/\._0-9]*\).*" \([0-9]*\) \([0-9]*\)/\1,\4-04-\2,\5,\7,\8,\9,\6/'
+
+© 2015 Microsoft Terms Privacy & cookies Developers English (United States)
+
+
+
+
+
+
+
+
+du -h $(find /usr/bin -type f -name "grub*")| sort -n -r | head -n 3 
+du -a /home/datascience/ | sort -n -r | head -n 3 | tail -1 | cut -d ' ' -f 1
+
+
+
+	************************************Q : 4: ***********************
+cut -d ' ' -f 4,8 wc_day6_1.log| sed 's/ +0000//' | sed 's/\[30\/Apr\/1998://' | sed 's/:[0-9][0-9]:[0-9][0-9]//'
+
+
+grep "30/Apr/1998" wc_day6_1.log | cut -d ' ' -f 4,8 | sed 's/ +0000//' | sed 's/\[30\/Apr\/1998://' | sed 's/:[0-9][0-9]:[0-9][0-9]//' | sort -n -r | uniq -c
+
+cut -d ' ' -f 4,8 wc_day6_1.log | sed 's/ +0000//' | sed 's/\[[0-9][0-9]\/[A-Z][a-z][a-z]\/[0-9][0-9][0-9][0-9]://' | sed 's/:[0-9][0-9]:[0-9][0-9]//' | sort -n -r | uniq -c
+
+
+cut -d ' ' -f 4,8 wc_day6_1.log | sed 's/ +0000//' | sed 's/\[[0-9][0-9]\/[A-Z][a-z][a-z]\/[0-9][0-9][0-9][0-9]://' | sed 's/:[0-9][0-9]:[0-9][0-9]//' | sort -n -r | uniq -c | grep "HTTP/1.0"
+
+
+
+
+********************
